@@ -4,7 +4,8 @@ from logging import FileHandler, StreamHandler
 import constants as cnts
 import os
 import datetime
-from data_loader import DataLoader
+from utils.data_loader import DataLoader
+from utils.data_processor import NERDataProcessor
 
 parser = argparse.ArgumentParser()
 
@@ -54,12 +55,12 @@ logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s
                         StreamHandler()
                     ])
 logger = logging.getLogger("run_ner")
-
 args = parser.parse_args()
 
 logger.info("ARGUMENTS:")
 for arg in vars(args):
     logger.info(f"{arg}: {getattr(args, arg)}")
+
 
 # Loading data from disk
 data_loader = DataLoader()
@@ -71,3 +72,8 @@ logger.info("Loading target data...")
 target_data = data_loader.get_data(args.target_path)
 
 
+# Preparing data for training
+data_processor = NERDataProcessor("mapping.json",
+                                  "/Users/alex/Python/BERT/bert-base-multilingual-uncased-torch",
+                                  128)
+processed_data = data_processor.process_data_for_ner(source_data, target_data)

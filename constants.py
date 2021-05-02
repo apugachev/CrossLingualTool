@@ -10,5 +10,7 @@ LABEL_FIELD = "label"
 O_TAG = "O"
 B_PREFIX = "B-"
 I_PREFIX = "I-"
+B_MISC = "B-MISC"
+I_MISC = "I-MISC"
 
 HH = "##"
