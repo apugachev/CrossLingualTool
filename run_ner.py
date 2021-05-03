@@ -1,11 +1,14 @@
 import argparse
 import logging
-from logging import FileHandler, StreamHandler
 import constants as cnts
 import os
 import datetime
+from logging import FileHandler, StreamHandler
+
+from utils.objects import TrainConfig
 from utils.data_loader import DataLoader
 from utils.data_processor import NERDataProcessor
+from utils.pipeline import NERTrainer
 
 parser = argparse.ArgumentParser()
 
@@ -20,6 +23,7 @@ parser.add_argument("--entity_mapping_path",
                     help="Path to entity mapping file")
 parser.add_argument("--save_folder",
                     dest="save_folder",
+                    default="saved_files/",
                     help="Path to trained models and results")
 
 # Training params
@@ -35,7 +39,7 @@ parser.add_argument("--max_epoch", default=20, type=int,
                     help="Maximum number of training epochs")
 parser.add_argument("--f1_avg", choices=["macro", "micro"], default="macro",
                     help="F1 Score averaging")
-parser.add_argument("--early_stopping", choices=["loss", "metric", "not"], default="loss",
+parser.add_argument("--early_stopping", choices=["loss", "accuracy", "f1", "not"], default="loss",
                     help="Strategy for the early stopping of training")
 parser.add_argument("--patience", type=int, default=1,
                     help="Number of epochs with no improvement after which training "
@@ -73,7 +77,31 @@ target_data = data_loader.get_data(args.target_path)
 
 
 # Preparing data for training
-data_processor = NERDataProcessor("mapping.json",
-                                  "/Users/alex/Python/BERT/bert-base-multilingual-uncased-torch",
-                                  128)
+logger.info("Starting processing data...")
+data_processor = NERDataProcessor(args.entity_mapping_path,
+                                  args.pretrained_path,
+                                  args.max_length)
 processed_data = data_processor.process_data_for_ner(source_data, target_data)
+
+# Starting pipeline
+
+train_config = TrainConfig(
+    pretrained_path=args.pretrained_path,
+    save_folder=args.save_folder,
+    batch_size=args.batch_size,
+    learning_rate=args.lr,
+    max_epoch=args.max_epoch,
+    max_length=args.max_length,
+    f1_avg=args.f1_avg,
+    early_stopping=args.early_stopping,
+    patience=args.patience,
+    device=args.device
+)
+
+trainer = NERTrainer(
+    train_config,
+    processed_data
+)
+trainer.run_pipeline()
+
+logger.info("Experiment finished successfully!")

@@ -5,27 +5,10 @@ from typing import List, Dict, Set, Union
 import logging
 import numpy as np
 from progressbar import progressbar as pb
-
-from utils.data_loader import Dataset
 from transformers import BertTokenizer
 
-
-@attr.s
-class TokenizedItem:
-    tokens: List[int] = attr.ib()
-    labels: List[str] = attr.ib()
-
-
-@attr.s
-class ProcessedData:
-    source_train_data: np.ndarray = attr.ib()
-    source_dev_data: np.ndarray = attr.ib()
-    source_test_data: np.ndarray = attr.ib()
-    target_train_data: np.ndarray = attr.ib()
-    target_dev_data: np.ndarray = attr.ib()
-    target_test_data: np.ndarray = attr.ib()
-    label2id: Dict = attr.ib()
-    id2label: Dict = attr.ib()
+from utils.data_loader import Dataset
+from utils.objects import TokenizedItem, ProcessedData
 
 
 class NERDataProcessor:
@@ -293,12 +276,12 @@ class NERDataProcessor:
         label2id = {label: idx for idx, label in enumerate(common_labels)}
         id2label = {idx: label for label, idx in label2id.items()}
 
-        self.logger.info("Processing source data")
+        self.logger.info("Processing source data...")
         source_train_data = self._process_data(source_data["train_items"], label2id)
         source_dev_data = self._process_data(source_data["dev_items"], label2id)
         source_test_data = self._process_data(source_data["test_items"], label2id)
 
-        self.logger.info("Processing target data")
+        self.logger.info("Processing target data...")
         target_train_data = self._process_data(target_data["train_items"], label2id)
         target_dev_data = self._process_data(target_data["dev_items"], label2id)
         target_test_data = self._process_data(target_data["test_items"], label2id)

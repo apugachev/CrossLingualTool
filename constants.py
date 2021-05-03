@@ -14,3 +14,15 @@ B_MISC = "B-MISC"
 I_MISC = "I-MISC"
 
 HH = "##"
+
+TRAIN_LOG_FREQ = 50
+
+MODELS_FOLDER = "models"
+RESULTS_FOLDER = "results"
+
+SOURCE = "source"
+FINETUNED = "finetuned"
+TARGET = "target"
+
+RESULTS_FILENAME = "result.json"
+ID2LABEL_FILENAME = "id2label.json"

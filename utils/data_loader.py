@@ -1,16 +1,10 @@
 import os
 import constants as cnts
-import attr
 import json
 from typing import List, Dict
 import logging
 
-
-@attr.s
-class Dataset(object):
-    train_items: list = attr.ib(default=[])
-    dev_items: list = attr.ib(default=[])
-    test_items: list = attr.ib(default=[])
+from utils.objects import Dataset
 
 
 class DataLoader:
