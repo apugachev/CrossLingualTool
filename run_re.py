@@ -6,9 +6,9 @@ import datetime
 from logging import FileHandler, StreamHandler
 
 from utils.objects import TrainConfig
-from utils.data_loader import NERDataLoader
-from utils.ner.ner_data_processor import NERDataProcessor
-from utils.ner.ner_pipeline import NERTrainer
+from utils.data_loader import REDataLoader
+from utils.re.re_data_processor import REDataProcessor
+from utils.re.re_pipeline import RETrainer
 
 parser = argparse.ArgumentParser()
 
@@ -27,7 +27,7 @@ parser.add_argument("--save_folder",
                     help="Path to trained models and results")
 
 # Training params
-parser.add_argument("--pretrained_path", default="bert-base-uncased", 
+parser.add_argument("--pretrained_path", default="bert-base-uncased",
                     help="Pre-trained checkpoint path or HuggingFace model name")
 parser.add_argument("--batch_size", default=64, type=int,
                     help="Batch size")
@@ -58,7 +58,8 @@ logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s
                         ),
                         StreamHandler()
                     ])
-logger = logging.getLogger("run_ner")
+
+logger = logging.getLogger("run_re")
 args = parser.parse_args()
 
 logger.info("ARGUMENTS:")
@@ -67,7 +68,7 @@ for arg in vars(args):
 
 
 # Loading data from disk
-data_loader = NERDataLoader()
+data_loader = REDataLoader()
 
 logger.info("Loading source data...")
 source_data = data_loader.get_data(args.source_path)
@@ -75,13 +76,11 @@ source_data = data_loader.get_data(args.source_path)
 logger.info("Loading target data...")
 target_data = data_loader.get_data(args.target_path)
 
-
-# Preparing data for training
 logger.info("Starting processing data...")
-data_processor = NERDataProcessor(args.entity_mapping_path,
+data_processor = REDataProcessor(args.entity_mapping_path,
                                   args.pretrained_path,
                                   args.max_length)
-processed_data = data_processor.process_data_for_ner(source_data, target_data)
+processed_data = data_processor.process_data_for_re(source_data, target_data)
 
 # Starting pipeline
 train_config = TrainConfig(
@@ -97,7 +96,7 @@ train_config = TrainConfig(
     device=args.device
 )
 
-trainer = NERTrainer(
+trainer = RETrainer(
     train_config,
     processed_data
 )

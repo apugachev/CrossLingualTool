@@ -1,4 +1,4 @@
-import constants as cnts
+from utils import constants as cnts
 import attr
 import json
 from typing import List, Dict, Set, Union
@@ -33,10 +33,13 @@ class NERDataProcessor:
             self.entity_mapping = json.load(f)
             self.logger.info("Entity mapping loaded")
 
+        self.logger.info("Tokenizer initialization...")
         self.tokenizer = BertTokenizer.from_pretrained(pretrained_path)
         self.max_len = max_len
 
-    def _convert_labels_to_iob(self, labels: List[str]) -> List[str]:
+    def _convert_labels_to_iob(self,
+                               labels: List[str]
+                               ) -> List[str]:
         """
         Convert labels to IOB2 format
         Details: https://en.wikipedia.org/wiki/Inside%E2%80%93outside%E2%80%93beginning_(tagging)
@@ -48,10 +51,10 @@ class NERDataProcessor:
         """
         new_labels = []
         for i, label in enumerate(labels):
-            if i == 0 and label != cnts.O_TAG:
+            if i == 0 and label != cnts.O_ENTITY:
                 new_label = cnts.B_PREFIX + label
-            elif label == cnts.O_TAG:
-                new_label = cnts.O_TAG
+            elif label == cnts.O_ENTITY:
+                new_label = cnts.O_ENTITY
             elif label == labels[i - 1]:
                 new_label = cnts.I_PREFIX + label
             else:
@@ -72,17 +75,17 @@ class NERDataProcessor:
 
     def _process_data_labels(self, data: Dataset) -> Dict:
         """
-        Apply label converting to data labels IOB2 if necessary
+        Apply label convertation to data labels IOB2 format if necessary
 
         :param data: Dataset, data to be processed
-        :return: Dataset, processed data
+        :return: dict, processed data
         """
         data = attr.asdict(data)
 
         for key, items in data.items():
             for item in items:
                 labels = item[cnts.LABEL_FIELD]
-                if all(not label.startswith(cnts.B_PREFIX) for label in labels) and set(labels) != {cnts.O_TAG}:
+                if all(not label.startswith(cnts.B_PREFIX) for label in labels) and set(labels) != {cnts.O_ENTITY}:
                     item[cnts.LABEL_FIELD] = self._convert_labels_to_iob(labels)
 
         return data
@@ -95,8 +98,8 @@ class NERDataProcessor:
                 labels = [label.split("-")[-1] for label in item[cnts.LABEL_FIELD]]
                 uniq_labels.update(labels)
 
-        uniq_bio_labels = set([cnts.B_PREFIX + label if label != cnts.O_TAG else label for label in uniq_labels])
-        uniq_bio_labels.update([cnts.I_PREFIX + label if label != cnts.O_TAG else label for label in uniq_labels])
+        uniq_bio_labels = set([cnts.B_PREFIX + label if label != cnts.O_ENTITY else label for label in uniq_labels])
+        uniq_bio_labels.update([cnts.I_PREFIX + label if label != cnts.O_ENTITY else label for label in uniq_labels])
 
         return uniq_bio_labels
 
@@ -182,7 +185,7 @@ class NERDataProcessor:
         :param labels: list, labels
         :return: TokenizedItem, BERT token ids along with labels
         """
-        bert_tokens, bio_labels = [self.tokenizer.cls_token], [cnts.O_TAG]
+        bert_tokens, bio_labels = [self.tokenizer.cls_token], [cnts.O_ENTITY]
 
         for word, label in zip(tokens, labels):
             new_tokens = self.tokenizer.tokenize(word)
@@ -192,7 +195,7 @@ class NERDataProcessor:
             bio_labels.extend(new_labels)
 
         bert_tokens.append(self.tokenizer.sep_token)
-        bio_labels.append(cnts.O_TAG)
+        bio_labels.append(cnts.O_ENTITY)
 
         for i, (token, label) in enumerate(zip(bert_tokens, bio_labels)):
             if token.startswith(cnts.HH) and label.startswith(cnts.B_PREFIX):
@@ -202,9 +205,9 @@ class NERDataProcessor:
         encoded_tokens = self.tokenizer.encode(bert_tokens, add_special_tokens=False)
 
         if len(bio_labels) >= self.max_len:
-            bio_labels[self.max_len - 1] = cnts.O_TAG
+            bio_labels[self.max_len - 1] = cnts.O_ENTITY
 
-        bio_labels = self._pad_sequence(bio_labels, self.max_len, cnts.O_TAG)
+        bio_labels = self._pad_sequence(bio_labels, self.max_len, cnts.O_ENTITY)
         encoded_tokens = self._pad_sequence(encoded_tokens, self.max_len, self.tokenizer.pad_token_id)
 
         return TokenizedItem(
@@ -242,7 +245,19 @@ class NERDataProcessor:
 
         return result
 
-    def process_data_for_ner(self, source_data: Dataset, target_data: Dataset):
+    def _get_label2id(self, common_labels: List[str]) -> Dict[str, int]:
+
+        common_labels = sorted(common_labels)
+        common_labels.remove(cnts.O_ENTITY)
+        common_labels.insert(0, cnts.O_ENTITY)
+
+        label2id = {label: idx for idx, label in enumerate(common_labels)}
+        return label2id
+
+    def process_data_for_ner(self,
+                             source_data: Dataset,
+                             target_data: Dataset
+                             ) -> ProcessedData:
         """
         Prepare source and target data for training NER
 
@@ -269,11 +284,7 @@ class NERDataProcessor:
         target_data = self._apply_label_mapping(target_data, label_mapping)
         self.logger.info("Label mapping created and applied to source and target data")
 
-        common_labels = sorted(list(common_labels))
-        common_labels.remove(cnts.O_TAG)
-        common_labels.insert(0, cnts.O_TAG)
-
-        label2id = {label: idx for idx, label in enumerate(common_labels)}
+        label2id = self._get_label2id(list(common_labels))
         id2label = {idx: label for label, idx in label2id.items()}
 
         self.logger.info("Processing source data...")

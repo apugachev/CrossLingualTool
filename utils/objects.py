@@ -16,12 +16,12 @@ class TokenizedItem:
 
 @attr.s
 class ProcessedData:
-    source_train_data: np.ndarray = attr.ib()
-    source_dev_data: np.ndarray = attr.ib()
-    source_test_data: np.ndarray = attr.ib()
-    target_train_data: np.ndarray = attr.ib()
-    target_dev_data: np.ndarray = attr.ib()
-    target_test_data: np.ndarray = attr.ib()
+    source_train_data = attr.ib()
+    source_dev_data = attr.ib()
+    source_test_data = attr.ib()
+    target_train_data = attr.ib()
+    target_dev_data = attr.ib()
+    target_test_data = attr.ib()
     label2id: dict = attr.ib()
     id2label: dict = attr.ib()
 
