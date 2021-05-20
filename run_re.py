@@ -78,8 +78,8 @@ target_data = data_loader.get_data(args.target_path)
 
 logger.info("Starting processing data...")
 data_processor = REDataProcessor(args.entity_mapping_path,
-                                  args.pretrained_path,
-                                  args.max_length)
+                                 args.pretrained_path,
+                                 args.max_length)
 processed_data = data_processor.process_data_for_re(source_data, target_data)
 
 # Starting pipeline
