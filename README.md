@@ -37,37 +37,37 @@ Examples of files for both tasks are provided [here](https://github.com/apugache
 
 ```sh
 python3 run_ner.py \
-		--source_data_path ../source_data/ \
-		--target_data_path ../target_data/ \
-		--entity_mapping_path ../entity_mapping.json \
-		--save_folder ../save_folder/ \
-		--pretrained_path bert-base-multilingual-uncased \
-		--batch_size 64 \
-		--lr 0.00001 \
-		--max_length 128 \
-		--max_epoch 20 \
-		--f1_avg macro \
-		--early_stopping loss \
-		--patience 1 \
-		--device cpu
+	--source_data_path ../source_data/ \
+	--target_data_path ../target_data/ \
+	--entity_mapping_path ../entity_mapping.json \
+	--save_folder ../save_folder/ \
+	--pretrained_path bert-base-multilingual-uncased \
+	--batch_size 64 \
+	--lr 0.00001 \
+	--max_length 128 \
+	--max_epoch 20 \
+	--f1_avg macro \
+	--early_stopping loss \
+	--patience 1 \
+	--device cpu
 ```
 
 #### Relation Extraction
 
 ```sh
 python3 run_ner.py \
-		--source_data_path ../source_data/ \
-		--target_data_path ../target_data/ \
-		--entity_mapping_path ../entity_mapping.json \
-		--save_folder ../save_folder/ \
-		--pretrained_path bert-base-multilingual-uncased \
-		--batch_size 64 \
-		--lr 0.00001 \
-		--max_length 128 \
-		--max_epoch 20 \
-		--f1_avg macro \
-		--early_stopping loss \
-		--patience 1 \
-		--device cpu
+	--source_data_path ../source_data/ \
+	--target_data_path ../target_data/ \
+	--entity_mapping_path ../entity_mapping.json \
+	--save_folder ../save_folder/ \
+	--pretrained_path bert-base-multilingual-uncased \
+	--batch_size 64 \
+	--lr 0.00001 \
+	--max_length 128 \
+	--max_epoch 20 \
+	--f1_avg macro \
+	--early_stopping loss \
+	--patience 1 \
+	--device cpu
 ```
 
