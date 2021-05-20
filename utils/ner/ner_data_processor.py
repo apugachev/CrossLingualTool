@@ -106,6 +106,8 @@ class NERDataProcessor:
     def _apply_entity_mapping(self, data: Dict) -> Dict:
         """
         Rename entity labels according to entity mapping
+        Keys are replaced to corresponding values
+        To be applied only to target data
         """
         for key, items in data.items():
             for item in items:
@@ -263,7 +265,7 @@ class NERDataProcessor:
 
         :param source_data: Dataset, source data
         :param target_data: Dataset, target data
-        :return:
+        :return: ProcessedData
         """
         source_data = self._process_data_labels(source_data)
         target_data = self._process_data_labels(target_data)

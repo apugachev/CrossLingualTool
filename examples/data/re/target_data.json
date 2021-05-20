@@ -1,0 +1,22 @@
+[
+  {
+    "token": [
+      "Джо", "Байден", "президент" "США", "."
+    ],
+    "relation": "IS_PRESIDENT_OF",
+    "subj_start": 0,
+    "subj_end": 1,
+    "obj_start": 3,
+    "obj_end": 3
+  },
+  {
+    "token": [
+      "Москва", "столица" "России", "."
+    ],
+    "relation": "IS_CAPITAL_OF",
+    "subj_start": 0,
+    "subj_end": 0,
+    "obj_start": 2,
+    "obj_end": 2
+  }
+]

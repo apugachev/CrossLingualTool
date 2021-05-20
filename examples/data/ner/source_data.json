@@ -1,0 +1,18 @@
+[
+  {
+    "token": [
+      "Joe", "Biden", "is", "the", "president", "of", "the", "USA", "."
+    ],
+    "label": [
+      "B-PERSON", "I-PERSON", "O", "O", "O", "O", "O", "B-COUNTRY", "O"
+    ]
+  },
+  {
+    "token": [
+      "Moscow", "is", "the", "capital", "of", "Russia", "."
+    ],
+    "label": [
+      "B-CITY", "O", "O", "O", "O", "B-COUNTRY", "O"
+    ]
+  }
+]

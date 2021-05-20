@@ -1,0 +1,22 @@
+[
+  {
+    "token": [
+      "Joe", "Biden", "is", "the", "president", "of", "the", "USA", "."
+    ],
+    "relation": "org:is_president_of",
+    "subj_start": 0,
+    "subj_end": 1,
+    "obj_start": 7,
+    "obj_end": 7
+  },
+  {
+    "token": [
+      "Moscow", "is", "the", "capital", "of", "Russia", "."
+    ],
+    "relation": "org:is_capital_of",
+    "subj_start": 0,
+    "subj_end": 0,
+    "obj_start": 5,
+    "obj_end": 5
+  }
+]

@@ -118,7 +118,13 @@ class REDataProcessor:
                             source_data: Dataset,
                             target_data: Dataset
                             ) -> ProcessedData:
+        """
+            Prepare source and target data for training RE
 
+            :param source_data: Dataset, source data
+            :param target_data: Dataset, target data
+            :return: ProcessedData
+        """
         source_data = attr.asdict(source_data)
         target_data = attr.asdict(target_data)
         source_data, target_data = self._process_labels(source_data, target_data)
